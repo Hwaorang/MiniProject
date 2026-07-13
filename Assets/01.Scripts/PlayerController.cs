@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;
     Collider2D collider;
+    SpriteRenderer sr;
 
     [SerializeField] float moveSpeed =5f;
     [SerializeField] int maxHp = 1;
@@ -18,13 +20,15 @@ public class PlayerController : MonoBehaviour
 
     Camera camera;
 
-    
+    float immortalTime;
     void Start()
     {
         rb= GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
+        sr = GetComponent<SpriteRenderer>();
         camera = Camera.main;
         nowHp = maxHp;
+        immortalTime = 2.5f;
     }
 
     
@@ -47,6 +51,11 @@ public class PlayerController : MonoBehaviour
         if(Keyboard.current.dKey.isPressed)
         {
             dir += Vector2.right;
+        }
+
+        if(Keyboard.current.ctrlKey.wasPressedThisFrame)
+        {
+            GameManager.instance.TryUseBomb();
         }
 
         dir = dir.normalized;
@@ -109,8 +118,42 @@ public class PlayerController : MonoBehaviour
 
     void Die()
     {
-        // 연출
         // 파괴
         // 남은 life 있는지 확인
+
+        GameManager.instance.ReducePlayerLife();
+    }
+
+    public void ResetPlayer()
+    {
+        maxHp = 1;
+        gameObject.GetComponent<PlayerAttack>().level = 0;
+        StartCoroutine(Immortal());
+        StartCoroutine(Blink());
+    }
+
+    // 잠시 무적 처리
+    IEnumerator Immortal()
+    {
+        collider.enabled = false;
+
+        yield return new WaitForSeconds(immortalTime);
+
+        collider.enabled = true;
+    }
+
+    IEnumerator Blink()
+    {
+
+        for(int i =0; i<3; i++)
+        {
+            WaitForSeconds wait = new WaitForSeconds(0.5f);
+
+            yield return wait;
+            sr.enabled = false;
+            yield return wait;
+            sr.enabled = true;
+        }
+        
     }
 }

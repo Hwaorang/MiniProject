@@ -16,7 +16,7 @@ public class EnemyBullet : MonoBehaviour
 
     void Start()
     {
-        
+        damage = 1;
         lifeTime = 3f;
         Destroy(gameObject, lifeTime);
     }
@@ -27,10 +27,6 @@ public class EnemyBullet : MonoBehaviour
     }
 
     
-    void Update()
-    {
-        
-    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {

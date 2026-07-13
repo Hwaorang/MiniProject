@@ -7,7 +7,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] GameObject bullet;
     
     [SerializeField] float attackDelay;
-    [SerializeField] int level;
+    [SerializeField] public int level;
 
     private float nextAttackTime;
     private void Start()
