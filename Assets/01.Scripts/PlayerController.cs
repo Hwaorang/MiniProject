@@ -13,12 +13,15 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] float moveSpeed =5f;
     [SerializeField] int maxHp = 1;
-
+    [SerializeField] int bombCount = 3;
     int nowHp;
 
     Vector2 dir;
 
     Camera camera;
+
+    Bomb bomb;
+
 
     float immortalTime;
     void Start()
@@ -26,6 +29,7 @@ public class PlayerController : MonoBehaviour
         rb= GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
         sr = GetComponent<SpriteRenderer>();
+        bomb = new Bomb();
         camera = Camera.main;
         nowHp = maxHp;
         immortalTime = 2.5f;
@@ -55,7 +59,7 @@ public class PlayerController : MonoBehaviour
 
         if(Keyboard.current.ctrlKey.wasPressedThisFrame)
         {
-            GameManager.instance.TryUseBomb();
+            TryUseBomb();
         }
 
         dir = dir.normalized;
@@ -127,6 +131,7 @@ public class PlayerController : MonoBehaviour
     public void ResetPlayer()
     {
         maxHp = 1;
+        bombCount = 3;
         gameObject.GetComponent<PlayerAttack>().level = 0;
         StartCoroutine(Immortal());
         StartCoroutine(Blink());
@@ -155,5 +160,19 @@ public class PlayerController : MonoBehaviour
             sr.enabled = true;
         }
         
+    }
+
+    void TryUseBomb()
+    {
+        if(bombCount>0)
+        {
+            bombCount--;
+            bomb.UseBomb();
+            UIManager.instance.SetBombText(bombCount.ToString());
+        }
+        else
+        {
+            return;
+        }
     }
 }

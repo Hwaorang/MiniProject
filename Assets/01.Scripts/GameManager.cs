@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Transform revivePosition;
 
     [SerializeField] int lifeCount = 3;
-    [SerializeField] int bombCount = 3;
+    
     int nowLife;
 
     private void Awake()
@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
         {
             nowLife--;
             ResurrectionPlayer();
+            UIManager.instance.SetLifeText(nowLife.ToString());
             // 플레이어 부활
             // 플레이어 초기화(무기레벨 등)
             // 플레이어 잠시 무적 처리
@@ -58,20 +59,15 @@ public class GameManager : MonoBehaviour
         // 플레이어 부활 및 위치 조정, 초기화
         player.transform.position = revivePosition.position;
         player.ResetPlayer();
-        bombCount = 3;
+        UIManager.instance.SetLifeText(nowLife.ToString());
+
     }
 
-    public void TryUseBomb()
+    
+    public void GetScore(int s)
     {
-        if(bombCount>0)
-        {
-            bombCount--;
-            // 실제 폭탄 효과 구현 부분
-        }
-        else
-        {
-            // 경고 메시지 or 아무 변화 없음
-        }
+        score += s;
+        UIManager.instance.SetScoreText(score.ToString());
     }
 
 }

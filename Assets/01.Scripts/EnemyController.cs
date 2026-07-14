@@ -7,22 +7,37 @@ public class EnemyController : MonoBehaviour
     [SerializeField] int nowHp;
 
     [SerializeField] GameObject bullet;
+    [SerializeField] GameObject item;
 
     float attackDelay;
 
     Collider2D collider;
 
     GameObject player;
+
+    float moveDistance;
+    float moveSpeed;
+    Vector3 targetPos;
     
     void Start()
     {
         collider = GetComponent<Collider2D>();
         nowHp = maxHp;
         attackDelay = 3f;
+        moveDistance = 5f;
+        moveSpeed = 3f;
+        targetPos = transform.position + Vector3.left * moveDistance;
+
         player = GameObject.Find("Player");
 
         StartCoroutine(ShootBullet());
-    }    
+    }
+
+    private void Update()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, targetPos,
+            moveSpeed * Time.deltaTime);
+    }
 
 
     public void TakeDamage(int dmg)
@@ -39,6 +54,8 @@ public class EnemyController : MonoBehaviour
         // 파괴
         // 파괴 연출
         // 아이템 생성
+
+        Instantiate(item, transform.position, Quaternion.identity);
 
         Destroy(gameObject);
     }
