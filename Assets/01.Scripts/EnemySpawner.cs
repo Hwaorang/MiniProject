@@ -7,14 +7,14 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] GameObject enemy;
     [SerializeField] GameObject boss;
     [SerializeField] Transform bossPos;
-    // 모든 적을 집어넣을 리스트
+    
     public List<EnemyController> allEnemy = new List<EnemyController>();
-    // 모든 적 총알을 집어넣을 리스트
+    
     public List<EnemyBullet> allEnemyBullet = new List<EnemyBullet>();
 
-    //[SerializeField] List<Transform> spawnPosition = new List<Transform>();
+    
     [SerializeField] List<Rect> spawnArea = new List<Rect>();
-    //[SerializeField] Color color = new Color(1, 0, 0, 0.5f);
+    
     
 
     bool isBossSpawn = false;
@@ -37,14 +37,6 @@ public class EnemySpawner : MonoBehaviour
         WaitForSeconds wait = new WaitForSeconds(3f);
         while(true)
         {
-            //int rand = Random.Range(0, spawnPosition.Count);
-
-            //Vector3 targetPos = spawnPosition[rand].position;
-
-            //GameObject enemy = ObjectPoolManager.instance.GetObject("Enemy");
-            //enemy.transform.position = targetPos;
-
-            //allEnemy.Add(enemy.GetComponent<EnemyController>());
             SummonEnemy();
 
             yield return wait;
