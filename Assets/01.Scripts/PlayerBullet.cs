@@ -1,21 +1,48 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerBullet : MonoBehaviour
 {
     [SerializeField] float moveSpeed=8f;
-    float lifeTime;
+    float lifeTime = 3f;
 
     Rigidbody2D rb;
 
     public int damage;
 
-    void Start()
+    private Coroutine limitTimeCoroutine;
+
+
+    private void Awake()
+    {        
+        rb = GetComponent<Rigidbody2D>();        
+        damage = 1;        
+    }
+    private void OnEnable()
     {
-        lifeTime = 3f;
-        rb = GetComponent<Rigidbody2D>();
-        rb.linearVelocity = Vector3.right * moveSpeed;
-        damage = 1;
-        Destroy(gameObject,lifeTime);
+        if(rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.linearVelocity = Vector2.right * moveSpeed;
+        }
+
+        if(limitTimeCoroutine != null)
+        {
+            StopCoroutine(limitTimeCoroutine);
+        }
+
+        limitTimeCoroutine = StartCoroutine(LimitTime());
+    }
+
+    IEnumerator LimitTime()
+    {
+        yield return new WaitForSeconds(lifeTime);
+        ReturnPool();
+    }
+
+    void ReturnPool()
+    {
+        ObjectPoolManager.instance.ReturnObject("Bullet", this.gameObject);
     }
 
 
@@ -24,7 +51,13 @@ public class PlayerBullet : MonoBehaviour
         if(collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             collision.gameObject.GetComponent<EnemyController>().TakeDamage(damage);
-            Destroy(gameObject);
+            ReturnPool();
+        }
+
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Boss"))
+        {
+            collision.gameObject.GetComponent<BossController>().TakeDamage(damage);
+            ReturnPool();
         }
     }
 }

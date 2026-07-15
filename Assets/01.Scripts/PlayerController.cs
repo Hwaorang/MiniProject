@@ -2,8 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// 플레이어 캐릭터 조작
-// 이동 동작 구현
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,27 +11,25 @@ public class PlayerController : MonoBehaviour
     SpriteRenderer sr;
 
     [SerializeField] float moveSpeed =5f;
-    [SerializeField] int maxHp = 1;
-    [SerializeField] int bombCount = 3;
-    int nowHp;
+    [SerializeField] int maxHp = 1;    
+    private int nowHp;
 
     Vector2 dir;
+    Camera camera;  
+    
+    private float immortalTime;
 
-    Camera camera;
 
-    Bomb bomb;
-
-
-    float immortalTime;
     void Start()
     {
         rb= GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
         sr = GetComponent<SpriteRenderer>();
-        bomb = new Bomb();
+        GameManager.instance.RegisterPlayer(this);
         camera = Camera.main;
         nowHp = maxHp;
         immortalTime = 2.5f;
+
     }
 
     
@@ -40,27 +37,22 @@ public class PlayerController : MonoBehaviour
     {
         dir = Vector2.zero;
 
-        if(Keyboard.current.wKey.isPressed)
+        if(Keyboard.current.upArrowKey.isPressed)
         {
             dir += Vector2.up;
         }
-        if(Keyboard.current.sKey.isPressed)
+        if(Keyboard.current.downArrowKey.isPressed)
         {
             dir += Vector2.down;
         }
-        if(Keyboard.current.aKey.isPressed)
+        if(Keyboard.current.leftArrowKey.isPressed)
         {
             dir += Vector2.left;
         }
-        if(Keyboard.current.dKey.isPressed)
+        if(Keyboard.current.rightArrowKey.isPressed)
         {
             dir += Vector2.right;
-        }
-
-        if(Keyboard.current.ctrlKey.wasPressedThisFrame)
-        {
-            TryUseBomb();
-        }
+        }       
 
         dir = dir.normalized;
     }
@@ -130,9 +122,8 @@ public class PlayerController : MonoBehaviour
 
     public void ResetPlayer()
     {
-        maxHp = 1;
-        bombCount = 3;
-        gameObject.GetComponent<PlayerAttack>().level = 0;
+        maxHp = 1;        
+        gameObject.GetComponent<PlayerAttack>().ResetAttack();
         StartCoroutine(Immortal());
         StartCoroutine(Blink());
     }
@@ -149,11 +140,10 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Blink()
     {
+        WaitForSeconds wait = new WaitForSeconds(0.5f);
 
-        for(int i =0; i<3; i++)
+        for (int i =0; i<3; i++)
         {
-            WaitForSeconds wait = new WaitForSeconds(0.5f);
-
             yield return wait;
             sr.enabled = false;
             yield return wait;
@@ -162,17 +152,5 @@ public class PlayerController : MonoBehaviour
         
     }
 
-    void TryUseBomb()
-    {
-        if(bombCount>0)
-        {
-            bombCount--;
-            bomb.UseBomb();
-            UIManager.instance.SetBombText(bombCount.ToString());
-        }
-        else
-        {
-            return;
-        }
-    }
+    
 }

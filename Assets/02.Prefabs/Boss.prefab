@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8600604796121030315
+--- !u!1 &1589073242529038292
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,56 +8,67 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1395306872147217434}
-  - component: {fileID: 1075019694692650503}
-  - component: {fileID: 1014035784226293288}
-  - component: {fileID: 256219818827244689}
-  m_Layer: 8
-  m_Name: Enemy
+  - component: {fileID: 2801213223508029427}
+  - component: {fileID: -1048304631601649955}
+  - component: {fileID: 3245011367451142415}
+  - component: {fileID: 19555891299382070}
+  - component: {fileID: 5189700871006078954}
+  m_Layer: 11
+  m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1395306872147217434
+  m_IsActive: 1
+--- !u!4 &2801213223508029427
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8600604796121030315}
+  m_GameObject: {fileID: 1589073242529038292}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.98, y: 0.07, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1075019694692650503
+--- !u!114 &-1048304631601649955
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8600604796121030315}
+  m_GameObject: {fileID: 1589073242529038292}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8cf1f49ef990dc24187ab63d7707c253, type: 3}
+  m_Script: {fileID: 11500000, guid: f4d9fbb792063524d9aad72f3fb37cfd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  maxHp: 3
-  nowHp: 0
+  m_EditorClassIdentifier: Assembly-CSharp::BossController
+  maxHp: 10
+--- !u!114 &3245011367451142415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1589073242529038292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54b8f21b013bce143abb24cf00f906eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAttack
   bullet: {fileID: 803083450058275335, guid: abac3816b31dc9b4fac65a0b348b33e2, type: 3}
-  item: {fileID: 1465064661645725651, guid: d8eed4711fc208646bb77b7162a83265, type: 3}
---- !u!212 &1014035784226293288
+--- !u!212 &19555891299382070
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8600604796121030315}
+  m_GameObject: {fileID: 1589073242529038292}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -100,7 +111,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.9716981, g: 0.27959237, b: 0.27959237, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -109,13 +120,13 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!61 &256219818827244689
+--- !u!61 &5189700871006078954
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8600604796121030315}
+  m_GameObject: {fileID: 1589073242529038292}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1

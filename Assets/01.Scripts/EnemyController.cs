@@ -9,34 +9,65 @@ public class EnemyController : MonoBehaviour
     [SerializeField] GameObject bullet;
     [SerializeField] GameObject item;
 
+    float attackRange;
     float attackDelay;
 
     Collider2D collider;
+    PlayerController player;
 
-    GameObject player;
-
-    float moveDistance;
+    bool canAttack = false;
     float moveSpeed;
-    Vector3 targetPos;
-    
-    void Start()
+
+    private void Awake()
     {
         collider = GetComponent<Collider2D>();
+    }
+    private void OnEnable()
+    {
+        
         nowHp = maxHp;
         attackDelay = 3f;
-        moveDistance = 5f;
-        moveSpeed = 3f;
-        targetPos = transform.position + Vector3.left * moveDistance;
-
-        player = GameObject.Find("Player");
-
-        StartCoroutine(ShootBullet());
-    }
+        attackRange = 10f;
+        moveSpeed = 3f;        
+        StartCoroutine(ShootBullet());        
+        player = null;
+    }    
 
     private void Update()
+    {        
+        if(player == null)
+        {
+            player = GameManager.instance.playerCon;
+        }
+        CheckDistance();
+    }
+    private void OnDisable()
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetPos,
-            moveSpeed * Time.deltaTime);
+        StopAllCoroutines();
+    }
+    void CheckDistance()
+    {
+        float distance = Vector3.Distance(transform.position, player.transform.position);
+
+        if(distance < attackRange)
+        {
+            canAttack = true;
+        }
+        else
+        {
+            canAttack = false;
+            Move();
+        }
+    }
+
+    void Move()
+    {
+        transform.position = Vector3.MoveTowards(transform.position,player.transform.position,moveSpeed * Time.deltaTime);
+    }
+
+    Vector2 GetDirecition()
+    {
+        return player.transform.position - transform.position;
     }
 
 
@@ -54,11 +85,20 @@ public class EnemyController : MonoBehaviour
         // 파괴
         // 파괴 연출
         // 아이템 생성
+        GameManager.instance.GetScore(1);
+        GameObject item =ObjectPoolManager.instance.GetObject("WeaponItem");
+        item.transform.position = transform.position;
+        item.SetActive(true);
 
-        Instantiate(item, transform.position, Quaternion.identity);
-
-        Destroy(gameObject);
+        ReturnPool();
     }
+
+
+    void ReturnPool()
+    {
+        ObjectPoolManager.instance.ReturnObject("Enemy", this.gameObject);
+    }
+
 
 
     IEnumerator ShootBullet()
@@ -67,13 +107,19 @@ public class EnemyController : MonoBehaviour
 
         while(true)
         {
+            if(canAttack)
+            {                
+                GameObject enemyBullet = ObjectPoolManager.instance.GetObject("EnemyBullet");
+
+                if(enemyBullet != null)
+                {
+                    enemyBullet.transform.position = transform.position;
+                    enemyBullet.SetActive(true);
+                    Vector2 dir = GetDirecition();
+                    enemyBullet.GetComponent<EnemyBullet>().SetDir(dir);
+                }
+            }            
             yield return wait;
-
-            GameObject enemyBullet = Instantiate(bullet, transform.position, Quaternion.identity);
-
-            Vector2 dir = player.transform.position - transform.position;      // 플레이어 위치 - 내 위치
-
-            enemyBullet.GetComponent<EnemyBullet>().SetDir(dir);
         }       
 
     }

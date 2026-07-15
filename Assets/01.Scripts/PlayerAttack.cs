@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,59 +6,89 @@ public class PlayerAttack : MonoBehaviour
 {
     [SerializeField] Transform firePosition;
     [SerializeField] GameObject bullet;
-    
-    [SerializeField] float attackDelay;
-    [SerializeField] public int level;
 
+    int bombCount = 3;
+
+    Bomb bomb;
+
+    public int level = 0;
+
+    float attackDelay = 0.15f;
     private float nextAttackTime;
+
+    private float bombDelay = 0.5f;
+    private float nextBombTime;
+
+
 
     private Vector3 offset;
 
     private void Start()
     {
         nextAttackTime = Time.time;
-        offset = new Vector3(0, 0.2f);
+        nextBombTime = Time.time;
+        bomb = GetComponentInChildren<Bomb>();
+        offset = new Vector3(0, 0.3f);
+
+        UIManager.instance.SetBombText(bombCount.ToString());
     }
 
 
     void Update()
     {
-        if(Keyboard.current.spaceKey.wasPressedThisFrame
-            && Time.time>=nextAttackTime /*공격 딜레이가 지났는가*/)
+        if(Keyboard.current.zKey.wasPressedThisFrame)
         {
-            Fire(level); // 공격
+            Fire(level);
+        }
+
+        if(Keyboard.current.xKey.wasPressedThisFrame)
+        {
+            TryUseBomb();
         }
     }
 
     void Fire(int level = 0)
     {
-        // 레벨에따른 총알생성
-        // 공격다시 사용가능한 시간설정
-        switch(level)
+        
+        if (Time.time - nextAttackTime < attackDelay)
         {
-            case 0:
+            return;
+        }
+
+        int bulletCount = level + 1;
+        float bulletY = firePosition.position.y - ((bulletCount - 1) * offset.y / 2f);
+
+        for(int i = 0; i < bulletCount; i++)
+        {
+            GameObject bullet = ObjectPoolManager.instance.GetObject("Bullet");
+
+            if(bullet != null )
             {
-                    Instantiate(bullet, firePosition.position, Quaternion.identity);
-                    return;
+                float targetY = bulletY + (i * offset.y);
+
+                bullet.transform.position = new Vector3(firePosition.position.x, targetY, firePosition.position.z);
+
+                bullet.SetActive(true);
             }
-            case 1:
-            {
-                    Instantiate(bullet, firePosition.position+offset, Quaternion.identity);
-                    Instantiate(bullet, firePosition.position-offset, Quaternion.identity);
-                    return;
-            }
-            case 2:
-            {
-                    Instantiate(bullet, firePosition.position, Quaternion.identity);
-                    Instantiate(bullet, firePosition.position+offset, Quaternion.identity);
-                    Instantiate(bullet, firePosition.position-offset, Quaternion.identity);
-                    return;
-            }
+        }
+        nextAttackTime = Time.time + attackDelay;
+    }
+
+
+    void TryUseBomb()
+    {
+        if (Time.time - nextBombTime>bombDelay && bombCount > 0)
+        {
+            bombCount--;
+            bomb.UseBomb();
+            UIManager.instance.SetBombText(bombCount.ToString());
 
         }
-        
-
-        nextAttackTime = Time.time + attackDelay;
+        else
+        {
+            return;
+        }
+        nextBombTime = Time.time + bombDelay;
     }
 
     public void WeaponLevelUp()
@@ -65,5 +96,13 @@ public class PlayerAttack : MonoBehaviour
         level++;
 
         level = Mathf.Clamp(level, 0, 2); // ()범위 안에 존재해야한다.
+    }
+
+    public void ResetAttack()
+    {
+        level = 0;
+        bombCount = 3;
+
+        UIManager.instance.SetBombText(bombCount.ToString());
     }
 }

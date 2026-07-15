@@ -4,39 +4,32 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public static EnemySpawner instance; // 직접구현할때는 싱글톤 말고 다른걸로 구현하기
-
     [SerializeField] GameObject enemy;
-
+    [SerializeField] GameObject boss;
+    [SerializeField] Transform bossPos;
     // 모든 적을 집어넣을 리스트
     public List<EnemyController> allEnemy = new List<EnemyController>();
     // 모든 적 총알을 집어넣을 리스트
     public List<EnemyBullet> allEnemyBullet = new List<EnemyBullet>();
 
-    [SerializeField] List<Transform> spawnPosition = new List<Transform>();
+    //[SerializeField] List<Transform> spawnPosition = new List<Transform>();
+    [SerializeField] List<Rect> spawnArea = new List<Rect>();
+    //[SerializeField] Color color = new Color(1, 0, 0, 0.5f);
+    
 
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
-    }
+    bool isBossSpawn = false;
     void Start()
-    {
-        // 일정시간마다 적 생성
-        // 적 이동
-        // 보스 소환
+    {        
         StartCoroutine(SpawnEnemy());
+    }
 
-
-        // 적 소환할 때 마다 allEnemy에 Add한다.
-        // 적이 소환 해제/파괴 될 때마다 allEnemy에서 Remove한다.
+    private void Update()
+    {
+        if(!isBossSpawn && GameManager.instance.currentTime>10f)
+        {
+            isBossSpawn = true;
+            SpawnBoss();
+        }
     }
 
     IEnumerator SpawnEnemy()
@@ -44,28 +37,82 @@ public class EnemySpawner : MonoBehaviour
         WaitForSeconds wait = new WaitForSeconds(3f);
         while(true)
         {
-            int rand = Random.Range(0, spawnPosition.Count);
+            //int rand = Random.Range(0, spawnPosition.Count);
 
-            GameObject obj = Instantiate(enemy, spawnPosition[rand].position,Quaternion.identity);
-            allEnemy.Add(obj.GetComponent<EnemyController>());
+            //Vector3 targetPos = spawnPosition[rand].position;
+
+            //GameObject enemy = ObjectPoolManager.instance.GetObject("Enemy");
+            //enemy.transform.position = targetPos;
+
+            //allEnemy.Add(enemy.GetComponent<EnemyController>());
+            SummonEnemy();
+
             yield return wait;
         }
     }
 
-    public void ClearEnemyBullet()
+    void SummonEnemy()
     {
-        for(int i = 0; i< allEnemy.Count; i++)
+        Rect spawnRect = spawnArea[Random.Range(0, spawnArea.Count)];
+        Vector2 randPos = new Vector2(Random.Range(spawnRect.xMin, spawnRect.xMax),
+            Random.Range(spawnRect.yMin, spawnRect.yMax));
+        GameObject enemy = ObjectPoolManager.instance.GetObject("Enemy");
+        if(enemy != null)
         {
-            Destroy(allEnemyBullet[i]);            
-            i--;
-        }       
+            enemy.transform.position = randPos;
+            enemy.SetActive(true);
+            EnemyController enemyController = enemy.GetComponent<EnemyController>();
+            if(enemyController != null )
+            {
+                allEnemy.Add(enemyController);
+            }
+        }
+
     }
 
-    public void TakeDamageAllEnemy(int dmg)
+
+
+    public void SpawnBoss()
     {
-        foreach(EnemyController enemy in allEnemy)
+        StopAllCoroutines();
+
+        for (int i = 0; i < allEnemy.Count; i++)
         {
-            enemy.TakeDamage(dmg);
+            if(allEnemy[i] != null && allEnemy[i].gameObject.activeSelf)
+            {
+                allEnemy[i].gameObject.SetActive(false);
+            }
+        }
+        allEnemy.Clear();
+
+        for(int i = 0; i < allEnemyBullet.Count; i++)
+        {
+            if (allEnemyBullet[i] != null && allEnemyBullet[i].gameObject.activeSelf)
+            {
+                allEnemyBullet[i].gameObject.SetActive(false);
+            }
+        }
+        allEnemyBullet.Clear();
+
+
+        Instantiate(boss, bossPos.position,Quaternion.identity);
+    }
+
+
+    private void OnDrawGizmosSelected()
+    {
+        if (spawnArea == null)
+        {
+            return;
+        }
+        
+
+        foreach (var area in spawnArea)
+        {
+            Vector3 center = new Vector3(area.x + area.width / 2, area.y + area.height / 2);
+            Vector3 size = new Vector3(area.width, area.height);
+
+            Gizmos.DrawCube(center, size);
         }
     }
 

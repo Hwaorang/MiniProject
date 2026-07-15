@@ -2,36 +2,62 @@ using UnityEngine;
 
 public class Bomb : MonoBehaviour
 {
+    int damage = 5;
+    float delayTime;
     
 
-    [SerializeField] int damage = 5;
-    [SerializeField] float delayTime;
-    [SerializeField] LayerMask enemyLayer;
-    [SerializeField] LayerMask enemyBulletLayer;    
+    Camera cam;
+    Collider2D[] col;
 
-
-
+    
     void Start()
     {
-        
+        cam = Camera.main;
     }
 
     public void UseBomb()
     {
-        // 1. 모든 적 데미지        
-        // 1-2 '모든 적 리스트'를 만들어서 그 리스트에 데미지 주기 
+       
 
-        foreach(EnemyController enemy in EnemySpawner.instance.allEnemy)
+        Vector3 min = cam.ViewportToWorldPoint(Vector3.zero);
+        Vector3 max = cam.ViewportToWorldPoint(Vector3.one);
+
+        col = Physics2D.OverlapAreaAll(min, max);
+
+        int enemyLayer = LayerMask.NameToLayer("Enemy");
+        int enemyBulletLayer = LayerMask.NameToLayer("EnemyBullet");
+        int bossLayer = LayerMask.NameToLayer("Boss");
+
+        foreach(Collider2D col2 in col)
         {
-            enemy.TakeDamage(damage);
+            if (col2 == null)
+            {
+                continue;
+            }
+
+            if (col2.gameObject.layer == enemyLayer)
+            {
+                EnemyController enemy = col2.gameObject.GetComponent<EnemyController>();
+                if(enemy != null)
+                {
+                    enemy.TakeDamage(damage);
+                }
+            }
+            else if (col2.gameObject.layer == enemyBulletLayer)
+            {
+                col2.gameObject.SetActive(false);
+            }
+            else if (col2.gameObject.layer == bossLayer)
+            {
+                BossController boss = col2.gameObject.GetComponent<BossController>();
+                if(boss != null)
+                {
+                    boss.TakeDamage(damage);
+                }
+            }
         }
 
 
-
-        // 2. 모든 적 총알 파괴
-        // 모든 적 총알 리스트를 만들어서 그 리스트 전부 파괴
-        EnemySpawner.instance.ClearEnemyBullet();
-        
     }
 
 }

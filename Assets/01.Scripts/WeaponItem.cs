@@ -1,18 +1,31 @@
+using System.Collections;
 using UnityEngine;
 
 public class WeaponItem : MonoBehaviour
 {
-    float moveSpeed;
+    float moveSpeed = 5f;
+    float lifeTime = 3f;
 
-    private void Start()
+    private Coroutine limitTimeCoroutine;    
+
+    private void OnEnable()
     {
-        moveSpeed = 3f;
-        Destroy(gameObject, 5f);
-
+        limitTimeCoroutine = StartCoroutine(LimitTime());
     }
     private void Update()
     {
         transform.position += Vector3.left * moveSpeed * Time.deltaTime;
+    }
+    
+    IEnumerator LimitTime()
+    {
+        yield return new WaitForSeconds(lifeTime);
+        ReturnPool();
+    }
+
+    void ReturnPool()
+    {
+        ObjectPoolManager.instance.ReturnObject("WeaponItem", this.gameObject);
     }
 
 
@@ -21,7 +34,7 @@ public class WeaponItem : MonoBehaviour
         if(collision.gameObject.layer ==LayerMask.NameToLayer("Player"))
         {
             collision.GetComponent<PlayerAttack>().WeaponLevelUp();
-            Destroy(gameObject);
+            ReturnPool();
         }
     }
 }
