@@ -36,15 +36,19 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
-        if(Keyboard.current.zKey.wasPressedThisFrame)
+        if(GameManager.instance.isPlay)
         {
-            Fire(level);
-        }
+            if (Keyboard.current.zKey.wasPressedThisFrame)
+            {
+                Fire(level);
+            }
 
-        if(Keyboard.current.xKey.wasPressedThisFrame)
-        {
-            TryUseBomb();
+            if (Keyboard.current.xKey.wasPressedThisFrame)
+            {
+                TryUseBomb();
+            }
         }
+        
     }
 
     void Fire(int level = 0)
@@ -98,6 +102,11 @@ public class PlayerAttack : MonoBehaviour
         level = Mathf.Clamp(level, 0, 2); // ()범위 안에 존재해야한다.
     }
 
+    public void GetBomb()
+    {
+        bombCount++;
+        UIManager.instance.SetBombText(bombCount.ToString());
+    }
     public void ResetAttack()
     {
         level = 0;

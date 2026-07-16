@@ -3,8 +3,6 @@ using UnityEngine;
 public class Bomb : MonoBehaviour
 {
     int damage = 5;
-    float delayTime;
-    
 
     Camera cam;
     Collider2D[] col;
@@ -56,8 +54,5 @@ public class Bomb : MonoBehaviour
                 }
             }
         }
-
-
     }
-
 }

@@ -25,7 +25,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
-        if(!isBossSpawn && GameManager.instance.currentTime>10f)
+        if(!isBossSpawn && GameManager.instance.currentTime>30f)
         {
             isBossSpawn = true;
             SpawnBoss();
@@ -37,8 +37,11 @@ public class EnemySpawner : MonoBehaviour
         WaitForSeconds wait = new WaitForSeconds(3f);
         while(true)
         {
+            //if(GameManager.instance.currentState ==GameState.Playing)
+            //{
+                
+            //}
             SummonEnemy();
-
             yield return wait;
         }
     }
@@ -46,9 +49,12 @@ public class EnemySpawner : MonoBehaviour
     void SummonEnemy()
     {
         Rect spawnRect = spawnArea[Random.Range(0, spawnArea.Count)];
+
         Vector2 randPos = new Vector2(Random.Range(spawnRect.xMin, spawnRect.xMax),
             Random.Range(spawnRect.yMin, spawnRect.yMax));
+
         GameObject enemy = ObjectPoolManager.instance.GetObject("Enemy");
+
         if(enemy != null)
         {
             enemy.transform.position = randPos;

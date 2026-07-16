@@ -9,6 +9,8 @@ public class EnemyBullet : MonoBehaviour
     Rigidbody2D rb;
     int damage;
 
+    private float camLimit;
+
     private Coroutine limitTimeCoroutine;
 
     private void Awake()
@@ -19,6 +21,8 @@ public class EnemyBullet : MonoBehaviour
 
     private void OnEnable()
     {
+        camLimit = Camera.main.ViewportToWorldPoint(new Vector3(0f, 0f, 0f)).x;
+
         if (rb != null)
         {
             rb.linearVelocity = Vector2.zero;
@@ -31,9 +35,15 @@ public class EnemyBullet : MonoBehaviour
         }
 
         limitTimeCoroutine = StartCoroutine(LimitTime());
-    } 
-    
+    }
 
+    private void Update()
+    {
+        if (transform.position.x < camLimit - 0.5f)
+        {
+            ReturnPool();
+        }
+    }
     IEnumerator LimitTime()
     {
         yield return new WaitForSeconds(lifeTime);
@@ -50,12 +60,30 @@ public class EnemyBullet : MonoBehaviour
         ObjectPoolManager.instance.ReturnObject("EnemyBullet", this.gameObject);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnDisable()
     {
-        if(collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (limitTimeCoroutine != null)
+        {
+            StopCoroutine(limitTimeCoroutine);
+            limitTimeCoroutine = null;
+        }
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             collision.gameObject.GetComponent<PlayerController>().TakeDamage(damage);
             ReturnPool();
         }
     }
+    //private void OnTriggerEnter2D(Collision2D collision)
+    //{
+    //    if(collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+    //    {
+    //        collision.gameObject.GetComponent<PlayerController>().TakeDamage(damage);
+    //        ReturnPool();
+    //    }
+    //}
 }

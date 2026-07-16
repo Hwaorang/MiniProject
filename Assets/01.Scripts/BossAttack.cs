@@ -19,7 +19,7 @@ public class BossAttack : MonoBehaviour
 
         while (true)
         {
-            int randomPattern = Random.Range(0, 2);
+            int randomPattern = Random.Range(0, 4);
 
             switch(randomPattern)
             {
@@ -28,6 +28,12 @@ public class BossAttack : MonoBehaviour
                     break;
                 case 1:
                     yield return StartCoroutine(SectorPattern());
+                    break;
+                case 2:
+                    yield return StartCoroutine(TargetPattern(5, 0.2f));
+                    break;
+                case 3:
+                    yield return StartCoroutine(SpiralPattern());
                     break;
             }
             yield return new WaitForSeconds(3.1f);
@@ -43,7 +49,7 @@ public class BossAttack : MonoBehaviour
     {
         int bulletCount = 10;
         float angle = 65f;
-        float bulletSpeed = 8;
+        float bulletSpeed = 8f;
 
         float subAngle = -angle * 0.5f;
 
@@ -71,7 +77,7 @@ public class BossAttack : MonoBehaviour
     {
         int bulletCount = 40;
         float interval = 360f / bulletCount;
-        float bulletSpeed = 8;
+        float bulletSpeed = 8f;
 
         for(int i =0;  i< bulletCount; i++)
         {
@@ -85,4 +91,42 @@ public class BossAttack : MonoBehaviour
         yield return null;
     }
 
+    IEnumerator TargetPattern(int count, float delay)
+    {
+        Transform target = GameManager.instance.playerCon.transform;
+
+        for(int i = 0; i<count; i++)
+        {
+            Vector2 direction = (target.position - transform.position).normalized;
+            float bulletSpeed = 7f;
+            GameObject enemyBullet = ObjectPoolManager.instance.GetObject("EnemyBullet");
+            enemyBullet.transform.position = transform.position;
+            enemyBullet.SetActive(true);
+            enemyBullet.GetComponent<EnemyBullet>().SetDir(direction*bulletSpeed);
+
+            yield return new WaitForSeconds(delay);
+        }
+    }
+
+    IEnumerator SpiralPattern()
+    {
+        int bulletCount = 30;
+        float bulletSpeed = 5f;
+        float angleStep = 15f;
+        float currentAngle = 0f;
+
+        for(int i = 0; i<bulletCount;i++)
+        {
+            Vector2 direction = Quaternion.Euler(0, 0, currentAngle) * Vector2.right;
+
+            GameObject enemyBullet = ObjectPoolManager.instance.GetObject("EnemyBullet");
+            enemyBullet.transform.position = transform.position;
+            enemyBullet.SetActive(true);
+            enemyBullet.GetComponent<EnemyBullet>().SetDir(direction * bulletSpeed);
+
+            currentAngle += angleStep;
+
+            yield return new WaitForSeconds(0.05f);
+        }
+    }
 }

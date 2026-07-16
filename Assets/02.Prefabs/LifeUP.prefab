@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6913011005067339244}
   - component: {fileID: 8577766372689604304}
   m_Layer: 10
-  m_Name: WeaponItem
+  m_Name: LifeUP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,6 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 143bea18921703342a1a326c1959f495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponItem
+  type: 0
+  itemValue: 1
 --- !u!212 &6913011005067339244
 SpriteRenderer:
   serializedVersion: 2
@@ -96,7 +98,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
-  m_Color: {r: 0.13243146, g: 0.9056604, b: 0.20520595, a: 1}
+  m_Color: {r: 0.90588236, g: 0.16794387, b: 0.13333334, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

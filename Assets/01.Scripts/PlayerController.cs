@@ -131,11 +131,15 @@ public class PlayerController : MonoBehaviour
     // 泪矫 公利 贸府
     IEnumerator Immortal()
     {
-        collider.enabled = false;
+        //collider.enabled = false;
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), 
+            LayerMask.NameToLayer("EnemyBullet"),true);
 
         yield return new WaitForSeconds(immortalTime);
 
-        collider.enabled = true;
+        Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), 
+            LayerMask.NameToLayer("EnemyBullet"), false);
+        //collider.enabled = true;
     }
 
     IEnumerator Blink()

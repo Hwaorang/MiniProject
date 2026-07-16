@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -7,7 +8,9 @@ public class EnemyController : MonoBehaviour
     [SerializeField] int nowHp;
 
     [SerializeField] GameObject bullet;
-    [SerializeField] GameObject item;
+    //[SerializeField] GameObject item;
+
+    [SerializeField] List<DropItem> dropItemList = new List<DropItem>();
 
     float attackRange;
     float attackDelay;
@@ -27,7 +30,7 @@ public class EnemyController : MonoBehaviour
         
         nowHp = maxHp;
         attackDelay = 3f;
-        attackRange = 10f;
+        attackRange = 12f;
         moveSpeed = 3f;        
         StartCoroutine(ShootBullet());        
         player = null;
@@ -86,11 +89,31 @@ public class EnemyController : MonoBehaviour
         // 파괴 연출
         // 아이템 생성
         GameManager.instance.GetScore(1);
-        GameObject item =ObjectPoolManager.instance.GetObject("WeaponItem");
-        item.transform.position = transform.position;
-        item.SetActive(true);
+        //GameObject item =ObjectPoolManager.instance.GetObject("WeaponItem");
+        //item.transform.position = transform.position;
+        DropItems();
+        
 
         ReturnPool();
+    }
+
+    void DropItems()
+    {
+        float random = Random.Range(0f, 100f);
+        float currentSum = 0f;
+
+        foreach(DropItem item in dropItemList)
+        {
+            currentSum += item.dropPro;
+
+            if(random <= currentSum)
+            {
+                GameObject dropItem = ObjectPoolManager.instance.GetObject(item.itemObj.name);
+
+                dropItem.transform.position = transform.position;
+                break;
+            }
+        }
     }
 
 

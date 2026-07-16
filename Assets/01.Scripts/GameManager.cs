@@ -1,5 +1,18 @@
 using UnityEngine;
+using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.SceneManagement;
+
+
+//public enum GameState
+//{
+//    Title,
+//    Playing,
+//    Paused,
+//    GameOver,
+//    Clear
+//}
+
+
 
 public class GameManager : MonoBehaviour
 {
@@ -7,21 +20,27 @@ public class GameManager : MonoBehaviour
 
     public PlayerController playerCon;
 
-    private long score;
+    public long score;
 
     public float currentTime;
 
+    //public GameState currentState;
+
     [SerializeField] Transform revivePosition;
 
-    [SerializeField] int lifeCount = 3;
+    [SerializeField] public int lifeCount = 3;
     
     int nowLife;
+
+    public bool isPlay = false;
 
     private void Awake()
     {
         if(instance == null)
         {
             instance = this;
+
+            ResetGameData();
         }
         else
         {
@@ -32,36 +51,60 @@ public class GameManager : MonoBehaviour
         
     }
 
+    //public void ChangeState(GameState state)
+    //{
+    //    currentState = state;
 
+    //    switch(currentState)
+    //    {
+    //        case GameState.Title:
+    //            Time.timeScale = 1f;
+    //            break;
+    //        case GameState.Playing:
+    //            Time.timeScale = 1f;
+    //            break;
+    //        case GameState.Paused:
+    //            Time.timeScale = 0f;
+    //            break;
+    //        case GameState.GameOver:
+    //            Time.timeScale = 0f;
+    //            break;
+    //        case GameState.Clear:
+    //            Time.timeScale = 0f;
+    //            break;
+    //    }
+    //}
 
     void Start()
     {        
-        nowLife = lifeCount;
-        UIManager.instance.SetLifeText(lifeCount.ToString());
-        UIManager.instance.SetScoreText(score.ToString());
+        
+        
     }
 
     private void Update()
     {
         currentTime += Time.deltaTime;
     }
+
+    public void ResetGameData()
+    {
+        score = 0;
+        nowLife = lifeCount;
+        currentTime = 0f;
+        isPlay = true;
+    }
+
     public void ReducePlayerLife()
     {
         if(nowLife >0)
         {
             nowLife--;
             ResurrectionPlayer();
-            UIManager.instance.SetLifeText(nowLife.ToString());
-            // 플레이어 부활
-            // 플레이어 초기화(무기레벨 등)
-            // 플레이어 잠시 무적 처리
+            UIManager.instance.SetLifeText(nowLife.ToString());            
         }
         else
         {
-            GameOver();
-            // 게임 종료
-            // 랭킹에 점수 저장
-            // 이어하기
+            GameOver();            
         }
     }
 
@@ -80,22 +123,39 @@ public class GameManager : MonoBehaviour
         score += s;
         UIManager.instance.SetScoreText(score.ToString());
     }
+    public void GetLife(int life)
+    {
+        nowLife += life;
+        UIManager.instance.SetLifeText(nowLife.ToString());
+    }
     
     public void GameClear()
     {
         // 승리 UI
-        // 타임스케일 0
-        // isPlay false
+        UIManager.instance.SetGameClearUI();
+        Time.timeScale = 0;
+        //타임스케일 0 (currentState = GameState.Clear)
+        isPlay = false;
     }
     public void GameOver()
-    {  
-        
-            // 게임오버 UI뜨게하기  (재시작,로비,게임종료 버튼추가)
-            // 타임스케일 0
-            // isPlay false  <- isPlay만들어서 추가하기 
-        
+    {
+        UIManager.instance.SetGameOverUI();
+        Time.timeScale = 0;         
+        isPlay = false;
+
     }
 
+    public void Retry()
+    {
+        SceneManager.LoadScene("GameScene");
+        Time.timeScale = 1;
+        isPlay = true;
+    }
+    public void Exit()
+    {
+        SceneManager.LoadScene("LobbyScene");
+        Time.timeScale = 1;        
+    }
     public void RegisterPlayer(PlayerController player)
     {
         playerCon = player;
