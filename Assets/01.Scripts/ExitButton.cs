@@ -3,12 +3,12 @@ using UnityEngine.UI;
 
 public class ExitButton : MonoBehaviour
 {
-    Button retryBtn;
+    Button exitBtn;
     
     void Start()
     {
-        retryBtn = GetComponent<Button>();
-        retryBtn.onClick.AddListener(ClickExitBtn);
+        exitBtn = GetComponent<Button>();
+        exitBtn.onClick.AddListener(ClickExitBtn);
 
     }
 

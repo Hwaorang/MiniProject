@@ -10,6 +10,9 @@ public class ObjectPoolManager : MonoBehaviour
 
     Dictionary<string,Queue<GameObject>> pools = new Dictionary<string,Queue<GameObject>>();
 
+    Dictionary<string,GameObject> prefabsPools = new Dictionary<string,GameObject>();
+
+
     int poolSize;
 
     private void Awake()
@@ -28,6 +31,8 @@ public class ObjectPoolManager : MonoBehaviour
         foreach (GameObject obj in objList)
         {
             pools[obj.name] = new Queue<GameObject>();
+
+            prefabsPools[obj.name] = obj;
 
             GameObject parentPool = new GameObject($"{obj.name}_Pool");
             parentPool.transform.SetParent(this.transform);
@@ -58,7 +63,9 @@ public class ObjectPoolManager : MonoBehaviour
         }
         else
         {
-            GameObject go = Instantiate(objList.Find(obj => obj.name == name));
+            //GameObject go = Instantiate(objList.Find(obj => obj.name == name));
+            GameObject go = Instantiate(prefabsPools[name]);
+            go.name = name;
             return go;
         }
     }

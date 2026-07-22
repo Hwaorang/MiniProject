@@ -30,7 +30,7 @@ public class PlayerAttack : MonoBehaviour
         bomb = GetComponentInChildren<Bomb>();
         offset = new Vector3(0, 0.3f);
 
-        UIManager.instance.SetBombText(bombCount.ToString());
+        UIManager.instance.SetBombText(bombCount);
     }
 
 
@@ -85,7 +85,7 @@ public class PlayerAttack : MonoBehaviour
         {
             bombCount--;
             bomb.UseBomb();
-            UIManager.instance.SetBombText(bombCount.ToString());
+            UIManager.instance.SetBombText(bombCount);
 
         }
         else
@@ -105,13 +105,13 @@ public class PlayerAttack : MonoBehaviour
     public void GetBomb()
     {
         bombCount++;
-        UIManager.instance.SetBombText(bombCount.ToString());
+        UIManager.instance.SetBombText(bombCount);
     }
     public void ResetAttack()
     {
         level = 0;
         bombCount = 3;
 
-        UIManager.instance.SetBombText(bombCount.ToString());
+        UIManager.instance.SetBombText(bombCount);
     }
 }

@@ -8,19 +8,25 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] GameObject boss;
     [SerializeField] Transform bossPos;
     
-    public List<EnemyController> allEnemy = new List<EnemyController>();
-    
-    public List<EnemyBullet> allEnemyBullet = new List<EnemyBullet>();
-
-    
+    public List<EnemyController> allEnemy = new List<EnemyController>();    
+    public List<EnemyBullet> allEnemyBullet = new List<EnemyBullet>();    
     [SerializeField] List<Rect> spawnArea = new List<Rect>();
-    
+
+    private int minSpawnCount = 1;
+    private int maxSpawnCount = 3;
+    private float spawnInterval = 3f;
+
+    private int waveSpawnCount = 10;
+    private float waveInterval = 15f;
+
     
 
     bool isBossSpawn = false;
+
     void Start()
     {        
         StartCoroutine(SpawnEnemy());
+        StartCoroutine(WaveSpawnEnemy());
     }
 
     private void Update()
@@ -34,41 +40,52 @@ public class EnemySpawner : MonoBehaviour
 
     IEnumerator SpawnEnemy()
     {
-        WaitForSeconds wait = new WaitForSeconds(3f);
+        WaitForSeconds wait = new WaitForSeconds(spawnInterval);
         while(true)
-        {
-            //if(GameManager.instance.currentState ==GameState.Playing)
-            //{
-                
-            //}
-            SummonEnemy();
+        {            
+            int spawnCount =Random.Range(minSpawnCount,maxSpawnCount);
+            SummonEnemy(spawnCount);
             yield return wait;
         }
     }
 
-    void SummonEnemy()
+    IEnumerator WaveSpawnEnemy()
     {
-        Rect spawnRect = spawnArea[Random.Range(0, spawnArea.Count)];
-
-        Vector2 randPos = new Vector2(Random.Range(spawnRect.xMin, spawnRect.xMax),
-            Random.Range(spawnRect.yMin, spawnRect.yMax));
-
-        GameObject enemy = ObjectPoolManager.instance.GetObject("Enemy");
-
-        if(enemy != null)
+        WaitForSeconds waveWait = new WaitForSeconds(waveInterval);
+        while(true)
         {
-            enemy.transform.position = randPos;
-            enemy.SetActive(true);
-            EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            if(enemyController != null )
+            yield return waveWait;
+            if (isBossSpawn)
             {
-                allEnemy.Add(enemyController);
+                break;
             }
+            SummonEnemy(waveSpawnCount);
         }
-
     }
 
+    void SummonEnemy(int count)
+    {
+        for(int i = 0; i<count; i++)
+        {
+            Rect spawnRect = spawnArea[Random.Range(0, spawnArea.Count)];
 
+            Vector2 randPos = new Vector2(Random.Range(spawnRect.xMin, spawnRect.xMax),
+                Random.Range(spawnRect.yMin, spawnRect.yMax));
+
+            GameObject enemy = ObjectPoolManager.instance.GetObject("Enemy");
+
+            if (enemy != null)
+            {
+                enemy.transform.position = randPos;
+                enemy.SetActive(true);
+                EnemyController enemyController = enemy.GetComponent<EnemyController>();
+                if (enemyController != null)
+                {
+                    allEnemy.Add(enemyController);
+                }
+            }
+        } 
+    }
 
     public void SpawnBoss()
     {
@@ -78,7 +95,8 @@ public class EnemySpawner : MonoBehaviour
         {
             if(allEnemy[i] != null && allEnemy[i].gameObject.activeSelf)
             {
-                allEnemy[i].gameObject.SetActive(false);
+                //allEnemy[i].gameObject.SetActive(false);
+                ObjectPoolManager.instance.ReturnObject("Enemy", allEnemy[i].gameObject);
             }
         }
         allEnemy.Clear();
@@ -87,7 +105,8 @@ public class EnemySpawner : MonoBehaviour
         {
             if (allEnemyBullet[i] != null && allEnemyBullet[i].gameObject.activeSelf)
             {
-                allEnemyBullet[i].gameObject.SetActive(false);
+                //allEnemyBullet[i].gameObject.SetActive(false);
+                ObjectPoolManager.instance.ReturnObject("EnemyBullet", allEnemy[i].gameObject);
             }
         }
         allEnemyBullet.Clear();

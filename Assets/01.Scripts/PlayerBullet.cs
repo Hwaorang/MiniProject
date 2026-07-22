@@ -12,16 +12,18 @@ public class PlayerBullet : MonoBehaviour
     private float camLimit;
     private Coroutine limitTimeCoroutine;
 
+    private bool isReturned = false;
 
     private void Awake()
     {        
         rb = GetComponent<Rigidbody2D>();        
-        damage = 1;        
+        damage = 1;
+        camLimit = Camera.main.ViewportToWorldPoint(new Vector3(1f, 0f, 0f)).x;
     }
     private void OnEnable()
     {
-        camLimit = Camera.main.ViewportToWorldPoint(new Vector3(1f, 0f, 0f)).x;
 
+        isReturned = false;
 
         if(rb != null)
         {
@@ -38,6 +40,11 @@ public class PlayerBullet : MonoBehaviour
     }
     private void Update()
     {
+        if(isReturned)
+        {
+            return;
+        }
+
         if (transform.position.x > camLimit + 0.5f)
         {
             ReturnPool();
@@ -55,6 +62,12 @@ public class PlayerBullet : MonoBehaviour
 
     void ReturnPool()
     {
+        if(isReturned)
+        {
+            return;
+        }    
+        isReturned = true;
+
         ObjectPoolManager.instance.ReturnObject("Bullet", this.gameObject);
     }
     
@@ -70,6 +83,11 @@ public class PlayerBullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if(isReturned)
+        {
+            return;
+        }
+
         if (collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             collision.gameObject.GetComponent<EnemyController>().TakeDamage(damage);

@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     Camera camera;  
     
     private float immortalTime;
-
+    private bool isImmortal = false;
 
     void Start()
     {
@@ -103,6 +103,12 @@ public class PlayerController : MonoBehaviour
 
     public void TakeDamage(int dmg)
     {
+        if(isImmortal)
+        {
+            return;
+        }
+        isImmortal = true;
+
         nowHp -= dmg;
         if(nowHp <= 0)
         {
@@ -113,10 +119,7 @@ public class PlayerController : MonoBehaviour
     }
 
     void Die()
-    {
-        // 파괴
-        // 남은 life 있는지 확인
-
+    {       
         GameManager.instance.ReducePlayerLife();
     }
 
@@ -128,10 +131,9 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(Blink());
     }
 
-    // 잠시 무적 처리
+    
     IEnumerator Immortal()
-    {
-        //collider.enabled = false;
+    {        
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), 
             LayerMask.NameToLayer("EnemyBullet"),true);
 
@@ -139,7 +141,7 @@ public class PlayerController : MonoBehaviour
 
         Physics2D.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), 
             LayerMask.NameToLayer("EnemyBullet"), false);
-        //collider.enabled = true;
+        isImmortal = false;
     }
 
     IEnumerator Blink()

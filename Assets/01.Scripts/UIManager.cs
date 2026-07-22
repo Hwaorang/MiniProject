@@ -1,14 +1,12 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
 
-    [SerializeField] TextMeshProUGUI scoreText;
-    [SerializeField] TextMeshProUGUI lifeText;
+    [SerializeField] TextMeshProUGUI scoreText;    
     [SerializeField] TextMeshProUGUI bombText;
     
     [SerializeField] Image gameOverImg;
@@ -30,22 +28,18 @@ public class UIManager : MonoBehaviour
     }
 
     private void Start()
-    {
-        SetLifeText(GameManager.instance.lifeCount.ToString());
-        SetScoreText(GameManager.instance.score.ToString());
+    {           
+        SetScoreText(GameManager.instance.score);
     }
 
-    public void SetScoreText(string text)
+    public void SetScoreText(int currentScore)
     {
-        scoreText.text = text;
+        scoreText.text = $"Score : {currentScore}";
     }
-    public void SetLifeText(string text)
+    
+    public void SetBombText(int currentBomb)
     {
-        lifeText.text = text;
-    }
-    public void SetBombText(string text)
-    {
-        bombText.text = text;
+        bombText.text = $"Bomb : {currentBomb}";
     }
 
     public void SetGameClearUI()

@@ -3,34 +3,21 @@ using UnityEngine.InputSystem.XR.Haptics;
 using UnityEngine.SceneManagement;
 
 
-//public enum GameState
-//{
-//    Title,
-//    Playing,
-//    Paused,
-//    GameOver,
-//    Clear
-//}
-
-
-
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
     public PlayerController playerCon;
 
-    public long score;
+    public int score;
 
-    public float currentTime;
-
-    //public GameState currentState;
+    public float currentTime;    
 
     [SerializeField] Transform revivePosition;
 
     [SerializeField] public int lifeCount = 3;
     
-    int nowLife;
+    public int nowLife;
 
     public bool isPlay = false;
 
@@ -51,39 +38,13 @@ public class GameManager : MonoBehaviour
         
     }
 
-    //public void ChangeState(GameState state)
-    //{
-    //    currentState = state;
-
-    //    switch(currentState)
-    //    {
-    //        case GameState.Title:
-    //            Time.timeScale = 1f;
-    //            break;
-    //        case GameState.Playing:
-    //            Time.timeScale = 1f;
-    //            break;
-    //        case GameState.Paused:
-    //            Time.timeScale = 0f;
-    //            break;
-    //        case GameState.GameOver:
-    //            Time.timeScale = 0f;
-    //            break;
-    //        case GameState.Clear:
-    //            Time.timeScale = 0f;
-    //            break;
-    //    }
-    //}
-
-    void Start()
-    {        
-        
-        
-    }
-
     private void Update()
     {
-        currentTime += Time.deltaTime;
+        if(isPlay)
+        {
+            currentTime += Time.deltaTime;
+        }
+        
     }
 
     public void ResetGameData()
@@ -99,8 +60,7 @@ public class GameManager : MonoBehaviour
         if(nowLife >0)
         {
             nowLife--;
-            ResurrectionPlayer();
-            UIManager.instance.SetLifeText(nowLife.ToString());            
+            ResurrectionPlayer();                      
         }
         else
         {
@@ -109,32 +69,26 @@ public class GameManager : MonoBehaviour
     }
 
     private void ResurrectionPlayer()
-    {
-        // 플레이어 부활 및 위치 조정, 초기화
+    {        
         playerCon.transform.position = revivePosition.position;
-        playerCon.ResetPlayer();
-        UIManager.instance.SetLifeText(nowLife.ToString());
-
+        playerCon.ResetPlayer(); 
     }
 
     
     public void GetScore(int s)
     {
         score += s;
-        UIManager.instance.SetScoreText(score.ToString());
+        UIManager.instance.SetScoreText(score);
     }
     public void GetLife(int life)
     {
-        nowLife += life;
-        UIManager.instance.SetLifeText(nowLife.ToString());
+        nowLife += life;        
     }
     
     public void GameClear()
-    {
-        // 승리 UI
+    {        
         UIManager.instance.SetGameClearUI();
-        Time.timeScale = 0;
-        //타임스케일 0 (currentState = GameState.Clear)
+        Time.timeScale = 0;        
         isPlay = false;
     }
     public void GameOver()
