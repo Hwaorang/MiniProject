@@ -7,8 +7,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] int maxHp = 3;
     [SerializeField] int nowHp;
 
-    [SerializeField] GameObject bullet;
-    //[SerializeField] GameObject item;
+    [SerializeField] GameObject bullet;    
 
     [SerializeField] List<DropItem> dropItemList = new List<DropItem>();
 
@@ -84,15 +83,10 @@ public class EnemyController : MonoBehaviour
     }
 
     void Die()
-    {
-        // 파괴
-        // 파괴 연출
-        // 아이템 생성
+    {        
         GameManager.instance.GetScore(1);
-        //GameObject item =ObjectPoolManager.instance.GetObject("WeaponItem");
-        //item.transform.position = transform.position;
-        DropItems();
         
+        DropItems();        
 
         ReturnPool();
     }
@@ -127,7 +121,7 @@ public class EnemyController : MonoBehaviour
     IEnumerator ShootBullet()
     {
         WaitForSeconds wait = new WaitForSeconds(attackDelay);
-
+        
         while(true)
         {
             if(canAttack)
@@ -136,9 +130,13 @@ public class EnemyController : MonoBehaviour
 
                 if(enemyBullet != null)
                 {
-                    enemyBullet.transform.position = transform.position;
-                    enemyBullet.SetActive(true);
+                    enemyBullet.transform.position = transform.position;                         
                     Vector2 dir = GetDirecition();
+                    //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                    //enemyBullet.transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+                    enemyBullet.SetActive(true);
+
                     enemyBullet.GetComponent<EnemyBullet>().SetDir(dir);
                 }
             }            

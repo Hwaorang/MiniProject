@@ -48,8 +48,8 @@ public class BossAttack : MonoBehaviour
     IEnumerator SectorPattern()
     {
         int bulletCount = 10;
-        float angle = 80f;
-        float bulletSpeed = 7f;
+        float angle = 75f;
+        float bulletSpeed = 11f;
 
         float subAngle = -angle * 0.5f;
 
@@ -77,7 +77,7 @@ public class BossAttack : MonoBehaviour
     {
         int bulletCount = 40;
         float interval = 360f / bulletCount;
-        float bulletSpeed = 9f;
+        float bulletSpeed = 12f;
 
         for(int i =0;  i< bulletCount; i++)
         {
@@ -98,7 +98,7 @@ public class BossAttack : MonoBehaviour
         for(int i = 0; i<count; i++)
         {
             Vector2 direction = (target.position - transform.position).normalized;
-            float bulletSpeed = 13f;
+            float bulletSpeed = 15f;
             GameObject enemyBullet = ObjectPoolManager.instance.GetObject("EnemyBullet");
             enemyBullet.transform.position = transform.position;
             enemyBullet.SetActive(true);
@@ -111,7 +111,7 @@ public class BossAttack : MonoBehaviour
     IEnumerator SpiralPattern()
     {
         int bulletCount = 60;
-        float bulletSpeed = 10f;
+        float bulletSpeed = 12f;
         float angleStep = 10f;
         float currentAngle = 0f;
 

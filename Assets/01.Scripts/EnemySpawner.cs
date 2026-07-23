@@ -104,8 +104,7 @@ public class EnemySpawner : MonoBehaviour
         for(int i = 0; i < allEnemyBullet.Count; i++)
         {
             if (allEnemyBullet[i] != null && allEnemyBullet[i].gameObject.activeSelf)
-            {
-                //allEnemyBullet[i].gameObject.SetActive(false);
+            {                
                 ObjectPoolManager.instance.ReturnObject("EnemyBullet", allEnemy[i].gameObject);
             }
         }

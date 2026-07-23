@@ -49,7 +49,6 @@ MonoBehaviour:
   maxHp: 3
   nowHp: 0
   bullet: {fileID: 803083450058275335, guid: abac3816b31dc9b4fac65a0b348b33e2, type: 3}
-  item: {fileID: 1465064661645725651, guid: d8eed4711fc208646bb77b7162a83265, type: 3}
   dropItemList:
   - itemName: LifeUP
     itemObj: {fileID: 1465064661645725651, guid: c654d6075a7ec3d41a2128b012787835, type: 3}
